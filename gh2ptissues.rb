@@ -2,15 +2,15 @@
 
 # Description:  Migrates GitHub Issues to Pivotal Tracker.
 
-GITHUB_ORG = 'APX'
-GITHUB_USER = 'shyam-habarakada'
-GITHUB_REPO = 'APX/benchpress-server'
-GITHUB_LOGIN = 'shyam-habarakada'
-PIVOTAL_PROJECT_ID = 836893
+GITHUB_ORG = ''
+GITHUB_USER = ''
+GITHUB_REPO = 'org/repo'
+GITHUB_LOGIN = ''
+PIVOTAL_PROJECT_ID = 836893 #from pivotal url
 PIVOTAL_PROJECT_USE_SSL = true
 
-GITHUB_PASSWORD = ENV['GITHUB_PASSWORD']
-PIVOTAL_TOKEN = ENV['PIVOTAL_TOKEN'].to_s unless ENV['PIVOTAL_TOKEN'].nil?
+GITHUB_PASSWORD = ''
+PIVOTAL_TOKEN = '' #from pivotal user profile
 
 require 'rubygems'
 require 'octokit'
@@ -22,7 +22,7 @@ require 'json'
 # puts ENV['GITHUB_PASSWORD']
 # puts ENV['PIVOTAL_TOKEN']
 
-dry_run = true
+dry_run = false
 
 begin
 
@@ -84,7 +84,7 @@ begin
         end
         
         github.add_comment(GITHUB_REPO, issue.number, "Migrated to pivotal tracker #{story.url}")
-        #github.close_issue(GITHUB_REPO, issue.number)
+        github.close_issue(GITHUB_REPO, issue.number)
       end
     end
 
