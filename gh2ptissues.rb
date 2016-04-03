@@ -84,7 +84,7 @@ begin
         end
         
         github.add_comment(GITHUB_REPO, issue.number, "Migrated to pivotal tracker #{story.url}")
-        github.close_issue(GITHUB_REPO, issue.number)
+        #github.close_issue(GITHUB_REPO, issue.number)
       end
     end
 
