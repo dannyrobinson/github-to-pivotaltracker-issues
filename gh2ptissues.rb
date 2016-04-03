@@ -6,16 +6,17 @@ GITHUB_ORG = ''
 GITHUB_USER = ''
 GITHUB_REPO = 'org/repo'
 GITHUB_LOGIN = ''
-PIVOTAL_PROJECT_ID = 836893 #from pivotal url
+PIVOTAL_PROJECT_ID =   #get from pivotal URL
 PIVOTAL_PROJECT_USE_SSL = true
 
 GITHUB_PASSWORD = ''
-PIVOTAL_TOKEN = '' #from pivotal user profile
+PIVOTAL_TOKEN = '' #get from pivotal user profile
 
 require 'rubygems'
 require 'octokit'
 require 'pivotal-tracker'
 require 'json'
+require 'reverse_markdown'
 
 # uncomment to debug
 # require 'net-http-spy'
@@ -35,9 +36,9 @@ begin
 
   github = Octokit::Client.new(:login => GITHUB_LOGIN, :password => GITHUB_PASSWORD)
 
-  issues_filter = 'bug' # update filter as appropriate
+  issues_filter = '' # update filter as appropriate
 
-  story_type = 'bug' # 'bug', 'feature', 'chore', 'release'. Omitting makes it a feature.
+  story_type = 'feature' # 'bug', 'feature', 'chore', 'release'. Omitting makes it a feature.
 
   story_current_state = 'unscheduled' # 'unscheduled', 'started', 'accepted', 'delivered', 'finished', 'unscheduled'.
                                       # 'unstarted' puts it in 'Current' if Commit Mode is on; 'Backlog' if Auto Mode is on.
@@ -62,9 +63,11 @@ begin
       puts "issue: #{issue.number} #{issue.title}, with #{comments.count} comments"
 
       unless dry_run
+        desc = issue.body
+        mddesc = ReverseMarkdown.convert desc
         story = pivotal_project.stories.create(
           :name => issue.title,
-          :description => issue.body,
+          :description => mddesc,
           :created_at => issue.created_at,
           :labels => labels,
           :story_type => story_type,     
@@ -84,7 +87,7 @@ begin
         end
         
         github.add_comment(GITHUB_REPO, issue.number, "Migrated to pivotal tracker #{story.url}")
-        #github.close_issue(GITHUB_REPO, issue.number)
+        github.close_issue(GITHUB_REPO, issue.number)
       end
     end
 
